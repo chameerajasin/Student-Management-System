@@ -1,8 +1,6 @@
-package com.chameera.student.service;
+package com.chameera.student.student;
 
-import com.chameera.student.exception.StudentNotFoundException;
-import com.chameera.student.model.Student;
-import com.chameera.student.repository.StudentRepository;
+import com.chameera.student.student.exception.StudentNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

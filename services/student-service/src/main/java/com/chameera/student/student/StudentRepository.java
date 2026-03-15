@@ -1,6 +1,5 @@
-package com.chameera.student.repository;
+package com.chameera.student.student;
 
-import com.chameera.student.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

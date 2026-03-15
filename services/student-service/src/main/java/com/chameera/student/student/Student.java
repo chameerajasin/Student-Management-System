@@ -1,4 +1,4 @@
-package com.chameera.student.model;
+package com.chameera.student.student;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
-package com.chameera.student.handler;
+package com.chameera.student.student.handler;
 
-import com.chameera.student.exception.StudentNotFoundException;
+import com.chameera.student.student.exception.StudentNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

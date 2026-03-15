@@ -1,8 +1,6 @@
-package com.chameera.student.controller;
+package com.chameera.student.student;
 
-import com.chameera.student.dto.*;
-import com.chameera.student.model.Student;
-import com.chameera.student.service.StudentService;
+import com.chameera.student.student.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

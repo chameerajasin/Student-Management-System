@@ -1,4 +1,4 @@
-package com.chameera.student.exception;
+package com.chameera.student.student.exception;
 
 
 import lombok.Getter;

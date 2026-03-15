@@ -1,4 +1,4 @@
-package com.chameera.student.dto;
+package com.chameera.student.student.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
