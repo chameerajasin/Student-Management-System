@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class StudentController {
 
     // get students : GET http method
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<Page<GetStudentResponse>> getStudents(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
@@ -47,6 +49,7 @@ public class StudentController {
 
     // get student by id : GET http method
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<GetStudentResponse> getStudentById(@PathVariable Long id) {
         //service call to get student
         Student student = studentService.getStudentById(id);
@@ -59,9 +62,17 @@ public class StudentController {
 
     }
 
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('STUDENT')")
+    ResponseEntity<GetStudentResponse> getMyProfile(Authentication authentication) {
+        Student student = studentService.getStudentByUsername(authentication.getName());
+        return ResponseEntity.ok(new GetStudentResponse(student.getId(), student.getName()));
+    }
+
     //TODO: convert this method to return Page info
     // get student by age : GET http method
-    @GetMapping("/age/{age}") 
+    @GetMapping("/age/{age}")
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<List<GetStudentResponse>> getStudentsByAge(@PathVariable int age){
         //service call to get students by age
         List<Student> studentsByAge = studentService.getStudentsByAge(age);
@@ -74,14 +85,14 @@ public class StudentController {
     }
 
     // create student: POST http method
-    @PreAuthorize("hasRole('TEACHER')")
     @PostMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<CreateStudentResponse> createStudent(@Valid @RequestBody CreateStudentRequest studentRequest) {
         // map CreateStudentRequest to Student
-        Student student = new Student(studentRequest.name(), studentRequest.age(), studentRequest.password());
+        Student student = new Student(studentRequest.name(), studentRequest.age());
 
         // call student/id service createStudent() method with Student
-        Student createdStudent = studentService.createStudent(student);
+        Student createdStudent = studentService.createStudent(student, studentRequest.userId());
 
         // map student to CreateStudentResponse
         CreateStudentResponse studentDto = new CreateStudentResponse(createdStudent.getId());
@@ -92,9 +103,10 @@ public class StudentController {
 
     // update student
     @PatchMapping("/{id}")
-    ResponseEntity<UpdateStudentResponse> getStudentByAge(@PathVariable Long id, @RequestBody UpdateStudentRequest studentRequest){
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<UpdateStudentResponse> getStudentByAge(@PathVariable Long id,@Valid @RequestBody UpdateStudentRequest studentRequest){
         //mapping updateRequest to student
-        Student student = new Student(studentRequest.name(), studentRequest.age(), studentRequest.password());
+        Student student = new Student(studentRequest.name(), studentRequest.age());
         student.setId(id);
 
         //service call  to update student
@@ -106,8 +118,18 @@ public class StudentController {
         return ResponseEntity.ok(updateStudentResponse);
     }
 
+    @PatchMapping("/me")
+    @PreAuthorize("hasRole('STUDENT')")
+    ResponseEntity<UpdateStudentResponse> updateMyProfile(Authentication authentication, @Valid @RequestBody UpdateStudentRequest studentRequest) {
+        String username = authentication.getName();
+        Student updates = new Student(studentRequest.name(), studentRequest.age());
+        Student updatedStudent = studentService.updateStudentByUsername(username, updates, studentRequest.password());
+        return ResponseEntity.ok(new UpdateStudentResponse(updatedStudent.getId(), updatedStudent.getName(), updatedStudent.getAge()));
+    }
+
     // delete student : DELETE http method
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> deleteStudent(@PathVariable Long id) {
         // call student service deleteStudent()
         studentService.deleteStudent(id);

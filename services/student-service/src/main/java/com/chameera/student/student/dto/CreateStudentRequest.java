@@ -13,11 +13,6 @@ public record CreateStudentRequest(
     @Max(value = 120, message = "Age must be at most 120")
     Integer age,
 
-    @NotBlank(message = "Password cannot be blank")
-    @Size(min = 8, max = 50, message = "Password must be between 8 and 50 characters")
-    @Pattern(
-        regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
-        message = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&)"
-    )
-    String password
+    Long userId
+
 ) {}
