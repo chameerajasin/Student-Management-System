@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -73,6 +74,7 @@ public class StudentController {
     }
 
     // create student: POST http method
+    @PreAuthorize("hasRole('TEACHER')")
     @PostMapping()
     ResponseEntity<CreateStudentResponse> createStudent(@Valid @RequestBody CreateStudentRequest studentRequest) {
         // map CreateStudentRequest to Student
