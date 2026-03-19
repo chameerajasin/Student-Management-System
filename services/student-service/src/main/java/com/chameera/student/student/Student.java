@@ -18,18 +18,10 @@ public class Student {
 
     private String name;
     private Integer age;
-    private String password;
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    public Student(String name, Integer age, String password) {
-        this.name = name;
-        this.age = age;
-        this.password = password;
-
-    }
 
     public  Student(String name, Integer age){
         this.name= name;
