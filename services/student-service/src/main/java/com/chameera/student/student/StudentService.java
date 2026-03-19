@@ -1,5 +1,6 @@
 package com.chameera.student.student;
 
+import com.chameera.student.auth.service.AuthService;
 import com.chameera.student.student.exception.StudentNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import java.util.List;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final AuthService authService;
 
     public Page<Student> getStudents(Pageable pageable) {
         //findByAll return a list of students [new Student(), ...]
@@ -28,6 +30,11 @@ public class StudentService {
 
     }
 
+    public Student getStudentByUsername(String username) {
+        return studentRepository.findByUserUsername(username)
+                .orElseThrow(() -> new StudentNotFoundException(username));
+    }
+
     public List<Student> getStudentsByAge(int age) {
         //Option 1: Stream API (Less efficient but works)
         /*return studentRepository.findAll()
@@ -39,7 +46,11 @@ public class StudentService {
         return studentRepository.findByAge(age);
     }
 
-    public Student createStudent(Student student) {
+    public Student createStudent(Student student, Long userId) {
+
+        if (userId != null) {
+            student.setUser(authService.getUserById(userId));
+        }
 
         return studentRepository.save(student);
     }
@@ -58,7 +69,17 @@ public class StudentService {
 
         if (student.getName() != null) studentDb.setName(student.getName());
         if (student.getAge() != null) studentDb.setAge(student.getAge());
-        if (student.getPassword() != null) studentDb.setPassword(student.getPassword());
+
+        return studentRepository.save(studentDb);
+    }
+
+    public Student updateStudentByUsername(String username, Student updates, String newPassword) {
+        Student studentDb = studentRepository.findByUserUsername(username)
+                .orElseThrow(() -> new StudentNotFoundException(username));
+
+        if (updates.getName() != null) studentDb.setName(updates.getName());
+        if (updates.getAge() != null) studentDb.setAge(updates.getAge());
+        if (newPassword != null) authService.changePassword(username, newPassword);
 
         return studentRepository.save(studentDb);
     }
